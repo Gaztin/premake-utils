@@ -1,6 +1,8 @@
 local conan = {}
 conan.version = "2.2.3"
 
+local download = require "download"
+
 local function getDownloadUrlFromHost(host)
   if host == "windows" then
     return "https://github.com/conan-io/conan/releases/download/"..conan.version.."/conan-"..conan.version.."-windows-x86_64.zip"
@@ -22,44 +24,10 @@ local function getDownloadUrlFromHost(host)
   end
 end
 
-local maxBars = 30
-function downloadProgressFunction(total, current)
-  local ratio = current / total;
-  ratio = math.min(math.max(ratio, 0), 1);
-  local percent = math.floor(ratio * 100);
-  local bars = math.floor(ratio * maxBars)
-  io.write("Downloading Conan: [" .. string.rep("=", bars) .. string.rep(" ", maxBars - bars) .. "] " .. percent .. "%\r")
-end
-
-local host        = os.host()
+local host = os.host()
 local downloadUrl = getDownloadUrlFromHost(host)
-local zipFilePath = path.join(_MAIN_SCRIPT_DIR, "conan", path.getname(downloadUrl))
-local didDownload = false
-
-if not os.isfile(zipFilePath) then
-  local downloadOptions = {
-    progress = downloadProgressFunction,
-  }
-  os.mkdir(path.getdirectory(zipFilePath))
-  io.write("Downloading Conan...\r")
-  local resultString, responseCode = http.download(downloadUrl, zipFilePath, downloadOptions)
-  io.write(string.rep(" ", maxBars + 30) .. "\r")
-  if responseCode ~= 200 then
-    error("Failed to download Conan: " .. resultString)
-  end
-  
-  io.write("Extracting Conan...\r")
-  local unzipResult = zip.extract(zipFilePath, path.getdirectory(zipFilePath))
-  if unzipResult ~= 0 then
-    os.remove(zipFilePath)
-    error("Failed to extract Conan: " .. unzipResult)
-  end
-  io.write(string.rep(" ", 30) .. "\r")
-
-  didDownload = true
-end
-
-conan.path = path.join(path.getdirectory(zipFilePath), "conan")
+local unpackDir, didDownload = download.zipFileAndUnpack(downloadUrl)
+conan.path = path.join(unpackDir, "conan")
 
 if didDownload then
   if host ~= "windows" then
@@ -79,7 +47,7 @@ conan.require = function(packageName, packageVersion)
   for cfg in premake.workspace.eachconfig(wks) do
     local arch = cfg.architecture
     local buildType = cfg.buildcfg
-    local outputFolder = path.getrelative(os.getcwd(), path.join(_MAIN_SCRIPT_DIR, "conan", "build"))
+    local outputFolder = path.getrelative(os.getcwd(), path.join(unpackDir, "build"))
     local command = conan.path .. " install --require " .. packageRef .. " --output-folder " .. outputFolder .. " --settings build_type=" .. buildType .. " --settings arch=" .. arch .. " --build missing --generator PremakeDeps"
 
     io.write("Installing Conan dependencies (" .. cfg.name .. ")...\r")
