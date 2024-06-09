@@ -37,9 +37,9 @@ end
 local function unpackTarball(tarballPath, unpackDir)
   os.mkdir(unpackDir)
   io.write("Unpacking...\r")
-  local result = os.execute("tar -xf "..tarballPath.." -C "..unpackDir)
-  if result ~= 0 then
-    error("Failed to unpack "..tarballPath..": "..result)
+  local output, exitCode = os.outputof("tar -xf "..tarballPath.." -C "..unpackDir)
+  if exitCode ~= 0 then
+    error("Failed to unpack "..tarballPath..": "..exitCode)
     return false
   end
   io.write(string.rep(" ", 20).."\r")
