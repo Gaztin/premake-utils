@@ -34,10 +34,21 @@ local function unpackZipFile(zipFilePath, unpackDir)
   return true
 end
 
+local function unpackTarball(tarballPath, unpackDir)
+  os.mkdir(unpackDir)
+  io.write("Unpacking...\r")
+  local result = os.execute("tar -xf "..tarballPath.." -C "..unpackDir)
+  if result ~= 0 then
+    error("Failed to unpack "..tarballPath..": "..result)
+    return false
+  end
+  io.write(string.rep(" ", 20).."\r")
+  return true
+end
+
 
 
 function download.zipFileAndUnpack(url)
-  download._currentUrl = url
   local downloadsDir = path.join(_MAIN_SCRIPT_DIR, ".downloads")
   local destinationZipFilePath = path.join(downloadsDir, path.getname(url))
   local unpackDir = path.join(downloadsDir, path.getbasename(url))
@@ -47,13 +58,29 @@ function download.zipFileAndUnpack(url)
     downloadFile(url, destinationZipFilePath)
     local didUnpack = unpackZipFile(destinationZipFilePath, unpackDir)
     if not didUnpack then
-      os.remove(zipFilePath)
+      os.remove(destinationZipFilePath)
     end
   
     didDownload = true
   end
+  return unpackDir, didDownload
+end
+
+function download.tarballAndUnpack(url)
+  local downloadsDir = path.join(_MAIN_SCRIPT_DIR, ".downloads")
+  local destinationTarballPath = path.join(downloadsDir, path.getname(url))
+  local unpackDir = path.join(downloadsDir, path.getbasename(url))
+  local didDownload = false
   
-  download._currentUrl = ""
+  if not os.isfile(destinationTarballPath) then
+    downloadFile(url, destinationTarballPath)
+    local didUnpack = unpackTarball(destinationTarballPath, unpackDir)
+    if not didUnpack then
+      os.remove(destinationTarballPath)
+    end
+  
+    didDownload = true
+  end
   return unpackDir, didDownload
 end
 
