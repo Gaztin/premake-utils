@@ -48,10 +48,11 @@ end
 
 
 
-function download.zipFileAndUnpack(url)
+function download.zipFileAndUnpack(url, optionalUnpackDirName)
   local downloadsDir = path.join(_MAIN_SCRIPT_DIR, ".downloads")
   local destinationZipFilePath = path.join(downloadsDir, path.getname(url))
-  local unpackDir = path.join(downloadsDir, path.getbasename(url))
+  local unpackDirName = optionalUnpackDirName or path.getbasename(url)
+  local unpackDir = path.join(downloadsDir, unpackDirName)
   local didDownload = false
   
   if not os.isfile(destinationZipFilePath) then
@@ -66,10 +67,11 @@ function download.zipFileAndUnpack(url)
   return unpackDir, didDownload
 end
 
-function download.tarballAndUnpack(url)
+function download.tarballAndUnpack(url, optionalUnpackDirName)
   local downloadsDir = path.join(_MAIN_SCRIPT_DIR, ".downloads")
   local destinationTarballPath = path.join(downloadsDir, path.getname(url))
-  local unpackDir = path.join(downloadsDir, path.getbasename(url))
+  local unpackDirName = optionalUnpackDirName or path.getbasename(url)
+  local unpackDir = path.join(downloadsDir, unpackDirName)
   local didDownload = false
   
   if not os.isfile(destinationTarballPath) then

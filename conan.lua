@@ -26,7 +26,8 @@ end
 
 local host = os.host()
 local downloadUrl = getDownloadUrlFromHost(host)
-local unpackDir, didDownload = download.zipFileAndUnpack(downloadUrl)
+local unpackDirName = "conan-"..conan.version
+local unpackDir, didDownload = download.zipFileAndUnpack(downloadUrl, unpackDirName)
 conan.path = path.join(unpackDir, "conan")
 
 if didDownload then
