@@ -92,29 +92,8 @@ end
 
 
 
-function embed.setNamespace(namespace)
-  embed._namespace = namespace
-end
-
 function embed.setIndentString(indentString)
   embed._indentString = indentString
-end
-
-function embed.file(inputPath)
-  local inputName = path.getname(inputPath)
-  local headerPath = path.join(embed._outputDir, inputName..".h")
-  local cppPath = path.join(embed._outputDir, inputName..".cpp")
-  createHeaderFile(headerPath, {inputPath})
-  createCppFile(cppPath, {inputPath})
-  print("Embedded file: "..inputPath.." -> "..headerPath)
-end
-
-function embed.files(inputPaths)
-  local headerPath = path.join(embed._outputDir, embed._fileName..".h")
-  local cppPath = path.join(embed._outputDir, embed._fileName..".cpp")
-  createHeaderFile(headerPath, inputPaths)
-  createCppFile(cppPath, inputPaths)
-  print("Embedded files: ["..table.concat(inputPaths, ", ").."] -> ["..headerPath..", "..cppPath.."]")
 end
 
 function embed.addFile(inputPath)
