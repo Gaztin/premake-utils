@@ -35,10 +35,10 @@ This script is used for embedding files into a C++ project. It provides function
 ```lua
 local embed = require "premake-utils/embed"
 
-embed.files("src/generated/", {
-  "res/icon.png",
-  "fonts/OpenSans-Regular.ttf",
-})
+embed.start("src/generated/")
+embed.addFile("res/icon.png")
+embed.addFile("fonts/OpenSans-Regular.ttf")
+embed.finish()
 
 workspace "MyWorkspace"
   configurations { "Debug", "Release" }
