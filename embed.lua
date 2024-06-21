@@ -5,6 +5,7 @@ embed._headerFile = nil
 embed._cppFile = nil
 embed._indentString = "\t"
 embed._indentLevel = 0
+embed._customDirectives = {}
 embed._currentFile = nil
 
 local function readFileContent(inputPath)
@@ -66,6 +67,12 @@ local function startHeaderFile()
   writeLine("#pragma once")
   writeLine("#include <cstdint>")
   newLine()
+  if #embed._customDirectives > 0 then
+    for _, directive in ipairs(embed._customDirectives) do
+      writeLine(directive)
+    end
+    newLine()
+  end
   writeLine("namespace "..embed._namespace.." {")
   newLine()
   embed._currentFile = nil
@@ -96,6 +103,10 @@ function embed.setIndentString(indentString)
   embed._indentString = indentString
 end
 
+function embed.addDirective(directive)
+  table.insert(embed._customDirectives, directive)
+end
+
 function embed.addFile(inputPath)
   local inputName = path.getname(inputPath)
   local identifier = inputName:gsub("[^%w]", "_")
@@ -111,6 +122,15 @@ function embed.addFile(inputPath)
   print("  "..inputPath.." -> "..identifier)
 end
 
+function embed.addCustom(type, identifier, value)
+  embed._currentFile = embed._headerFile
+  writeLine("extern const "..type.." "..identifier..";")
+  embed._currentFile = embed._cppFile
+  writeLine("const "..type.." "..embed._namespace.."::"..identifier.." = "..value..";")
+  embed._currentFile = nil
+  print("  "..value.." -> "..identifier)
+end
+
 function embed.start(outputDir, fileName, namespace)
   embed._fileName = fileName or "Embeds"
   embed._namespace = namespace or "Embeds"
@@ -124,6 +144,7 @@ end
 function embed.finish()
   finishHeaderFile()
   finishCppFile()
+  embed._customDirectives = {}
   embed._headerFile:close()
   embed._headerFile = nil
   embed._cppFile:close()
