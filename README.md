@@ -81,7 +81,7 @@ Changes the base name of the generated .h and .cpp files. Defaults to "Embeds" (
 
 ---
 
-🛌 **semver.lua**
+🔟 **semver.lua**
 
 This script provides methods of creating and using semantic versions.
 <details>
