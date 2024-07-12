@@ -78,3 +78,29 @@ Changes the indentation method used during generation. Defaults to "\t", or one 
 Changes the base name of the generated .h and .cpp files. Defaults to "Embeds" (i.e. Embeds.h, Embeds.cpp).
 *<summary>Customizations</summary>*
 </details>
+
+---
+
+🛌 **semver.lua**
+
+This script provides methods of creating and using semantic versions.
+<details>
+
+```lua
+local semver = require "premake-utils/semver"
+
+MAJOR = 2
+MINOR = 6
+PATCH = os.getenv("BUILD_NUMBER")
+local productVersion = semver.new(MAJOR, MINOR, PATCH)
+
+...
+
+local minimumVersion = semver.parse(os.getenv("MIN_VER"))
+if productVersion < minimumVersion then
+  error("Product version is outdated!")
+end
+
+```
+*<summary>Show usage example</summary>*
+</details>
