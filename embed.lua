@@ -119,7 +119,6 @@ function embed.addFile(inputPath)
   writeLine("const size_t "..embed._namespace.."::"..identifier.."_size = "..#content..";")
   writeCArray(embed._namespace.."::"..identifier, content)
   embed._currentFile = nil
-  print("  "..inputPath.." -> "..identifier)
 end
 
 function embed.addCustom(type, identifier, value)
@@ -132,7 +131,6 @@ function embed.addCustom(type, identifier, value)
     newLine()
   end
   embed._currentFile = nil
-  print("  "..value.." -> "..identifier)
 end
 
 function embed.start(outputDir, fileName, namespace)
