@@ -119,6 +119,7 @@ function embed.addFile(inputPath)
   writeLine("const size_t "..embed._namespace.."::"..identifier.."_size = "..#content..";")
   writeCArray(embed._namespace.."::"..identifier, content)
   embed._currentFile = nil
+  return identifier
 end
 
 function embed.addCustom(type, identifier, value)
