@@ -122,6 +122,18 @@ function embed.addFile(inputPath)
   return identifier
 end
 
+function embed.addFileInternalUse(inputPath)
+  local inputName = path.getname(inputPath)
+  local identifier = inputName:gsub("[^%w]", "_")
+  local content = readFileContent(inputPath)
+  embed._currentFile = embed._cppFile
+  writeLine("const size_t "..identifier.."_size = "..#content..";")
+  writeCArray(identifier, content)
+  newLine()
+  embed._currentFile = nil
+  return identifier
+end
+
 function embed.addCustom(type, identifier, value)
   local isValueMultiline = value:find("\n") ~= nil
   embed._currentFile = embed._headerFile
