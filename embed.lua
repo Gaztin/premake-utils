@@ -123,10 +123,14 @@ function embed.addFile(inputPath)
 end
 
 function embed.addCustom(type, identifier, value)
+  local isValueMultiline = value:find("\n") ~= nil
   embed._currentFile = embed._headerFile
   writeLine("extern const "..type.." "..identifier..";")
   embed._currentFile = embed._cppFile
   writeLine("const "..type.." "..embed._namespace.."::"..identifier.." = "..value..";")
+  if isValueMultiline then
+    newLine()
+  end
   embed._currentFile = nil
   print("  "..value.." -> "..identifier)
 end
