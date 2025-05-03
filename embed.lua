@@ -62,7 +62,7 @@ local function writeCArray(identifier, content)
 end
 
 local function writeRawString(identifier, content)
-  writeLine("const char "..identifier.."[] = R\"(")
+  write("const char "..identifier.."[] = R\"(")
   write(content)
   writeLine(")\";")
 end
